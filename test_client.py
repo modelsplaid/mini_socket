@@ -2,7 +2,7 @@
 
 import sys
 import time
-from libclient import MiniSocketClient
+from mini_socket_sdk.libclient import MiniSocketClient
 import logging
 
 logging.basicConfig(level=logging.INFO, 

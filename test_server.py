@@ -5,10 +5,9 @@ import socket
 import selectors
 import traceback
 import time
-import libserver
 import threading
 import logging
-from libserver import MiniSocketServer
+from mini_socket_sdk.libserver import MiniSocketServer
 #sel = selectors.DefaultSelector()
 
 #logging.basicConfig(filename='app.log',level=logging.DEBUG,filemode='w', 
