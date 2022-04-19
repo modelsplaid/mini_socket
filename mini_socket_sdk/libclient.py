@@ -263,6 +263,7 @@ class MiniSocketClient:
             port=12345
             send_freq=500
             socket_buffer_sz=4096
+            self.max_user_message_queue_size = 100
         else: 
             # parse json config file
             print("Parsing json config file for socket")
@@ -274,12 +275,14 @@ class MiniSocketClient:
                 port = socket_config['net_params']['PORT']
                 send_freq = socket_config['net_params']['SEND_FREQUENCY_HZ']
                 socket_buffer_sz = socket_config['net_params']['SOCKET_BUFFER_SIZE']
-
+                self.max_user_message_queue_size = socket_config\
+                            ['net_params']["MAX_SEND_MESSAGE_FRAME_QUEUE_SIZE"]
         #2. assign arguments
         self.socket_recv_buffer_sz = socket_buffer_sz
         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
         self.user_message = ''
         self.user_message_queu = queue.Queue()
+        
         self.sel = selectors.DefaultSelector()        
         self.start_connection(host, port)
 
@@ -294,7 +297,13 @@ class MiniSocketClient:
         
         print("Mini socket client done init")
     def push_sender_queu(self,user_input):
-        self.user_message_queu.put(user_input)
+        if(self.user_message_queu.qsize() < self.max_user_message_queue_size):
+            self.user_message_queu.put(user_input)
+        else:
+            self.user_message_queu.get() # update queu to most recent data
+            self.user_message_queu.put(user_input)
+            #print("user_message_queu exceeded maximum size,drop this data!")
+            pass
 
     def pop_receiver_queue(self):
         if (self.recv_queues.empty()==False):

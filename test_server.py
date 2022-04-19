@@ -21,6 +21,7 @@ if __name__ == '__main__':
     while True:
         i=i+1
         m_sock_server.push_sender_queu("server sent msg: " +str(i))
+        #print("pushing to server queue")
 
         while True: 
             one_frame=m_sock_server.pop_receiver_queue()

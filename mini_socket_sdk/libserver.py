@@ -286,6 +286,7 @@ class MiniSocketServer:
             port=12345
             send_freq=500
             socket_buffer_sz=4096
+            self.max_user_message_queue_size = 100
         else:
             # parse json config file
             print("Parsing json config file for socket")
@@ -297,11 +298,16 @@ class MiniSocketServer:
                 port = socket_config['net_params']['PORT']
                 send_freq = socket_config['net_params']['SEND_FREQUENCY_HZ']
                 socket_buffer_sz = socket_config['net_params']['SOCKET_BUFFER_SIZE']
-                
+                self.max_user_message_queue_size = socket_config\
+                            ['net_params']["MAX_SEND_MESSAGE_FRAME_QUEUE_SIZE"]
+                            
         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
         self.socket_recv_buffer_sz = socket_buffer_sz
         self.user_message = ''
         self.user_message_queu = queue.Queue()
+         
+        self.max_user_message_queue_size = 100
+
         self.sel = selectors.DefaultSelector()        
         self.create_listening_port(host,port)
 
@@ -314,7 +320,7 @@ class MiniSocketServer:
         self.socket_thread_obj.daemon = True
         self.socket_thread_obj.start()
         self.recv_queues = queue.Queue()
-        
+       
         print("Mini socket server done init")
 
     def create_listening_port(self,host,port):
@@ -330,8 +336,13 @@ class MiniSocketServer:
         return True
 
     def push_sender_queu(self,user_input):
-        self.user_message_queu.put(user_input)
-
+        if(self.user_message_queu.qsize() < self.max_user_message_queue_size):
+            self.user_message_queu.put(user_input)
+        else:
+            self.user_message_queu.get() # update queu to most recent data
+            self.user_message_queu.put(user_input)
+            #print("user_message_queu exceeded maximum size,drop this data!")
+            pass
     def pop_receiver_queue(self):
         if (self.recv_queues.empty()==False):
             return self.recv_queues.get()
@@ -344,18 +355,26 @@ class MiniSocketServer:
         try:
             while True:
                 self.sleep_freq_hz() 
+                #print("events = self.sel.select(None)")
+                #events = self.sel.select(0.01)
                 events = self.sel.select(None)
+                #print("if(self.user_message_queu.empty()")
 
                 # load data and events for each connected client 
-                #if(self.user_message is not ''):  # if new data is coming from servos
                 if(self.user_message_queu.empty() is  False):
                     self.user_message = self.user_message_queu.get()
                     #print("self.user_message: "+str(self.user_message))
+                    #print("events: "+str(events))
                     for key, mask in events: # loop over each client connect objs
                         if key.data is not None:  # if connected to the client
                             libserver_obj = key.data
                             #print("socket libserver_obj will send： "+self.user_message)
                             libserver_obj.server_send_json(self.user_message)                                     
+
+                        else: 
+                            pass
+                            #print("key.data is not None")
+
                     self.user_message = '' # clear out    
                 else: 
                     self.sleep_freq_hz(50)
