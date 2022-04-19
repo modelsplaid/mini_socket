@@ -10,7 +10,7 @@ format='%(filename)s,%(funcName)s,%(lineno)d,%(name)s ,%(process)d, %(levelname)
 
 
 if __name__ == '__main__':
-    m_sock_client = MiniSocketClient()
+    m_sock_client = MiniSocketClient('net_commu_config.json')
 
     for i in range(200):
         m_sock_client.push_sender_queu("client sent msg: " +str(i))

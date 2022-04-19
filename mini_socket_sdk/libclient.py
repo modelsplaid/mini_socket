@@ -9,7 +9,7 @@ import time
 import threading
 import traceback
 import socket
-
+import json
 
 class MessageClient:
     def __init__(self, selector, sock, addr,socket_buffer_sz=4096):
@@ -235,7 +235,47 @@ class MessageClient:
 
 
 class MiniSocketClient:
-    def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):
+    # def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):
+    #     self.socket_recv_buffer_sz = socket_buffer_sz
+    #     self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+    #     self.user_message = ''
+    #     self.user_message_queu = queue.Queue()
+    #     self.sel = selectors.DefaultSelector()        
+    #     self.start_connection(host, port)
+
+    #     #self.test_commu_thread = threading.Thread(target=self.test_commu_thread, args=(2,))
+    #     #self.test_commu_thread.daemon = True
+    #     #self.test_commu_thread.start()
+
+    #     self.socket_thread_obj = threading.Thread(target=self.socket_thread, args=(2,))
+    #     self.socket_thread_obj.daemon = True
+    #     self.socket_thread_obj.start()
+    #     self.recv_queues = queue.Queue()
+        
+    #     print("Mini socket client done init")
+
+
+    def __init__(self,config_file_name=''):
+        #1. parse arguments 
+
+        if(config_file_name is ''): 
+            host=""
+            port=12345
+            send_freq=500
+            socket_buffer_sz=4096
+        else: 
+            # parse json config file
+            print("Parsing json config file for socket")
+            with open(config_file_name, "r") as fObj:
+                socket_config = json.load(fObj)               
+                print("socket_config content: ")
+                print(socket_config)
+                host = socket_config['net_params']['IP']
+                port = socket_config['net_params']['PORT']
+                send_freq = socket_config['net_params']['SEND_FREQUENCY_HZ']
+                socket_buffer_sz = socket_config['net_params']['SOCKET_BUFFER_SIZE']
+
+        #2. assign arguments
         self.socket_recv_buffer_sz = socket_buffer_sz
         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
         self.user_message = ''
@@ -253,7 +293,6 @@ class MiniSocketClient:
         self.recv_queues = queue.Queue()
         
         print("Mini socket client done init")
-
     def push_sender_queu(self,user_input):
         self.user_message_queu.put(user_input)
 

@@ -1,0 +1,8 @@
+{
+    "net_params": {
+        "IP": "",
+        "PORT": 12346,
+        "SEND_FREQUENCY_HZ":500,
+        "SOCKET_BUFFER_SIZE":4096
+    }
+}

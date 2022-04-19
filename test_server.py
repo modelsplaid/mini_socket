@@ -16,7 +16,7 @@ format='%(filename)s,%(funcName)s,%(lineno)d,%(name)s ,%(process)d, %(levelname)
 logging.debug('This will get logged')
 
 if __name__ == '__main__':
-    m_sock_server=MiniSocketServer()
+    m_sock_server=MiniSocketServer('net_commu_config.json')
     i = 0
     while True:
         i=i+1
