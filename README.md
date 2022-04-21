@@ -1,3 +1,5 @@
+# todo: add documentation on it
+
 # Socket Programming in Python (Guide)
 
 This is the source code for [Socket Programming in Python (Guide)](https://realpython.com/python-sockets/).
