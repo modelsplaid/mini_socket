@@ -201,8 +201,8 @@ class MessageServer:
 
         # if not received full data pack 
         if  content_len > len(self._recv_raw_buffer):
-            logging.error("not received full data pack. if not len(self._recv_raw_buffer) >= content_len")
-            print("!!!!!!not received full data pack. return process_response!!!!!!")
+            #logging.error("not received full data pack. if not len(self._recv_raw_buffer) >= content_len")
+            #print("!!!!!!not received full data pack. return process_response!!!!!!")
             return False
         else:
             # if  received full data pack, start to process it 

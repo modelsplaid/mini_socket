@@ -206,8 +206,7 @@ class MessageClient:
         
         # if not received full data pack 
         if  content_len > len(self._recv_raw_buffer):
-            logging.error("not received full data pack. if not len(self._recv_raw_buffer) >= content_len")
-            print("!!!!!!not received full data pack. return process_response")
+            #print("!!!!!!not received full data pack. return process_response")
             return False
 
         else:
@@ -319,6 +318,7 @@ class MiniSocketClient:
         connectstat=sock.connect_ex(addr)
         print("connectstat: "+str(connectstat))
         print("sock: "+str(sock))
+        print("self.socket_recv_buffer_sz: "+str(self.socket_recv_buffer_sz))
         #events = selectors.EVENT_READ
         events = selectors.EVENT_READ| selectors.EVENT_WRITE
         libclient_obj = MessageClient(self.sel, sock, addr,self.socket_recv_buffer_sz)
@@ -370,6 +370,7 @@ class MiniSocketClient:
                                 break
 
                     except Exception:
+                        print(Exception)
                         print(
                             f"Main: Error: Exception for {libclient_obj.addr}:\n"
                             f"{traceback.format_exc()}"
