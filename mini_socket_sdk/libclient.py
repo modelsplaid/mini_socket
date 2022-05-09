@@ -12,7 +12,7 @@ import socket
 import json
 
 class MessageClient:
-    def __init__(self, selector, sock, addr,socket_buffer_sz=4096):
+    def __init__(self, selector, sock, addr,socket_buffer_sz=40960):
         self.selector = selector
         self.sock = sock
         self.addr = addr

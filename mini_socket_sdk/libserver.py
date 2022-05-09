@@ -11,7 +11,7 @@ import socket
 import time
 
 class MessageServer:
-    def __init__(self, selector, sock, addr,socket_buffer_sz=4096):
+    def __init__(self, selector, sock, addr,socket_buffer_sz=40960):
         self.selector = selector
         self.sock = sock
         self.addr = addr
@@ -285,7 +285,7 @@ class MiniSocketServer:
             host=""
             port=12345
             send_freq=500
-            socket_buffer_sz=4096
+            socket_buffer_sz=40960
             self.max_user_message_queue_size = 100
         else:
             # parse json config file
