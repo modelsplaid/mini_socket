@@ -379,7 +379,7 @@ class MiniSocketClient:
 
                 # Check for a socket being monitored to continue.
                 if not self.sel.get_map():
-                    print("get_map")
+                    print("mini socket:Servor not started")
         except KeyboardInterrupt:
             print("Caught keyboard interrupt, exiting")
             return
