@@ -379,12 +379,13 @@ class MiniSocketClient:
 
                 # Check for a socket being monitored to continue.
                 if not self.sel.get_map():
-                    print("mini socket:Servor not started")
+                    print("mini socket: Servor not started")
+                    self.sleep_freq_hz(1)
         except KeyboardInterrupt:
             print("Caught keyboard interrupt, exiting")
             return
         finally:
-            print("---self.sel.close")
+            print("mini socket: Close clients")
             self.sel.close()
             return
 
