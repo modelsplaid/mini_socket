@@ -366,6 +366,10 @@ class MiniSocketClient:
 
                             if(onedata is not False): 
                                 self.recv_queues.put(onedata)
+                                
+                                # when queue data is too large, pop out 
+                                if(self.recv_queues.qsize()>self.max_user_message_queue_size):
+                                    self.recv_queues.get()
                                 #print("++++ received from server data: "+str(onedata))  
                             else:
                                 break
