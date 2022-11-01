@@ -258,7 +258,7 @@ class MiniSocketClient:
     def __init__(self,config_file_name=''):
         #1. parse arguments 
 
-        if(config_file_name is ''): 
+        if(config_file_name == ''): 
             host=""
             port=12345
             send_freq=500
