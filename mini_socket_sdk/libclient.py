@@ -387,7 +387,7 @@ class MiniSocketClient:
                     
                     self.sleep_freq_hz(1)
                     if(counter<10):
-                        print("mini socket: Servor not started")
+                        print("mini socket: Servor not started "+str(counter) )
                     counter = counter+1
                     
                     
