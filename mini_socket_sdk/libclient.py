@@ -329,7 +329,7 @@ class MiniSocketClient:
 
 
     def socket_thread(self,name): 
-        
+        counter = 0
         try:
             runstatus = True
             while  runstatus:
@@ -384,8 +384,13 @@ class MiniSocketClient:
 
                 # Check for a socket being monitored to continue.
                 if not self.sel.get_map():
-                    print("mini socket: Servor not started")
+                    
                     self.sleep_freq_hz(1)
+                    if(counter<10):
+                        print("mini socket: Servor not started")
+                    counter = counter+1
+                    
+                    
         except KeyboardInterrupt:
             print("Caught keyboard interrupt, exiting")
             return
