@@ -218,16 +218,16 @@ class MessageClient:
             self._recv_raw_buffer = self._recv_raw_buffer[content_len:]
 
             if self.jsonheader["content-type"] == "text/json":
-                encoding = self.jsonheader["content-encoding"]
+                encoding      = self.jsonheader["content-encoding"]
                 self.response = self._json_decode(data, encoding)
                 logging.debug("self.response:"+str(self.response))
                 #print(f"Received response {self.response!r} from {self.addr}")
 
                 self.recv_queue.put(self.response) # pop out the queu
                 # to prepare decode next frame in buffer
-                self.response = None
+                self.response        = None
                 self._jsonheader_len = None                
-                self.jsonheader = None
+                self.jsonheader      = None
             return True
     def get_recv_queu(self):
         if(self.recv_queue.empty()==False):
@@ -254,9 +254,9 @@ class MiniSocketClient:
                 socket_config = json.load(fObj)               
                 print("socket_config content: ")
                 print(socket_config)
-                host = socket_config['net_params']['IP']
-                port = socket_config['net_params']['PORT']
-                send_freq = socket_config['net_params']['SEND_FREQUENCY_HZ']
+                host             = socket_config['net_params']['IP']
+                port             = socket_config['net_params']['PORT']
+                send_freq        = socket_config['net_params']['SEND_FREQUENCY_HZ']
                 socket_buffer_sz = socket_config['net_params']['SOCKET_BUFFER_SIZE']
                 self.max_user_message_queue_size = socket_config\
                             ['net_params']["MAX_SEND_MESSAGE_FRAME_QUEUE_SIZE"]

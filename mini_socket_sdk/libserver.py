@@ -284,7 +284,7 @@ class MiniSocketServer:
         self.sel = selectors.DefaultSelector()        
         self.create_listening_port(host,port)
 
-        self.test_commu_thread = threading.Thread(target=self.test_commu_thread, args=(2,))
+        self.test_commu_thread        = threading.Thread(target=self.test_commu_thread, args=(2,))
         self.test_commu_thread.daemon = True
         self.test_commu_thread.start()
 
