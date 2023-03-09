@@ -13,28 +13,28 @@ import json
 
 class MessageClient:
     def __init__(self, selector, sock, addr,socket_buffer_sz=40960):
-        self.selector = selector
-        self.sock = sock
-        self.addr = addr
-        self.request = None
+
+        self.selector         = selector
+        self.sock             = sock
+        self.addr             = addr
+        self.request          = None
         self._recv_raw_buffer = b""
-        self._send_buffer = b""
-        self._request_queued = False
-        self._jsonheader_len = None
-        self.jsonheader = None
-        self.response = None
-        self.recv_queue = queue.Queue()
-        self.request = self.create_request('')
-        self.hdrlen = 2
+        self._send_buffer     = b""
+        self._request_queued  = False
+        self._jsonheader_len  = None
+        self.jsonheader       = None
+        self.response         = None
+        self.recv_queue       = queue.Queue()
+        self.request          = self.create_request('')
+        self.hdrlen           = 2
         self.socket_recv_buffer_sz = socket_buffer_sz
+
     def create_request(self,value):
             return dict(
                 type="text/json",
                 encoding="utf-8",
                 content=dict(value=value),
             )
-
-
 
     def _set_selector_events_mask(self, mode):
         """Set selector to listen for events: mode is 'r', 'w', or 'rw'."""
@@ -70,8 +70,6 @@ class MessageClient:
                 return False
         return True
 
-
-
     def write(self):
         if len(self._send_buffer)>0:
             
@@ -101,15 +99,18 @@ class MessageClient:
     def _create_message(
         self, *, content_bytes, content_type, content_encoding
     ):
-        jsonheader = {
-            "byteorder": sys.byteorder,
-            "content-type": content_type,
-            "content-encoding": content_encoding,
-            "content-length": len(content_bytes),
-        }
+        jsonheader = \
+            {
+            "byteorder"       : sys.byteorder     ,
+            "content-type"    : content_type      ,
+            "content-encoding": content_encoding  ,
+            "content-length"  : len(content_bytes),
+            }
+
         jsonheader_bytes = self._json_encode(jsonheader, "utf-8")
-        message_hdr = struct.pack(">H", len(jsonheader_bytes))
-        message = message_hdr + jsonheader_bytes + content_bytes
+        message_hdr      = struct.pack(">H", len(jsonheader_bytes))
+        message          = message_hdr + jsonheader_bytes + content_bytes
+
         return message
 
     def process_events(self, mask):
@@ -165,21 +166,24 @@ class MessageClient:
         content_type = self.request["type"]
         content_encoding = self.request["encoding"]
        
-        req = {
-            "content_bytes": self._json_encode(content, content_encoding),
-            "content_type": content_type,
+        req = \
+            {
+            "content_bytes"   : self._json_encode(content, content_encoding),
+            "content_type"    : content_type,
             "content_encoding": content_encoding,
-        }
+            }
  
-        message = self._create_message(**req)
+        message            = self._create_message(**req)
         self._send_buffer += message
 
     def process_protoheader(self):
         self.hdrlen = 2 # first two bytes is header, contains message length info
         if len(self._recv_raw_buffer) >= self.hdrlen:
+
             self._jsonheader_len = struct.unpack(
                 ">H", self._recv_raw_buffer[:self.hdrlen]
-            )[0]
+                )[0]
+            
             self._recv_raw_buffer = self._recv_raw_buffer[self.hdrlen:]
             logging.debug("self._jsonheader_len:"+str(self._jsonheader_len))
 
@@ -203,8 +207,6 @@ class MessageClient:
     def process_response(self):
         content_len = self.jsonheader["content-length"]
 
-        #logging.debug("len(self._recv_raw_buffer):"+str(len(self._recv_raw_buffer))+" content_len:"+str(content_len))
-        
         # if not received full data pack 
         if  content_len > len(self._recv_raw_buffer):
             #print("!!!!!!not received full data pack. return process_response")
@@ -235,34 +237,15 @@ class MessageClient:
 
 
 class MiniSocketClient:
-    # def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):
-    #     self.socket_recv_buffer_sz = socket_buffer_sz
-    #     self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
-    #     self.user_message = ''
-    #     self.user_message_queu = queue.Queue()
-    #     self.sel = selectors.DefaultSelector()        
-    #     self.start_connection(host, port)
-
-    #     #self.test_commu_thread = threading.Thread(target=self.test_commu_thread, args=(2,))
-    #     #self.test_commu_thread.daemon = True
-    #     #self.test_commu_thread.start()
-
-    #     self.socket_thread_obj = threading.Thread(target=self.socket_thread, args=(2,))
-    #     self.socket_thread_obj.daemon = True
-    #     self.socket_thread_obj.start()
-    #     self.recv_queues = queue.Queue()
-        
-    #     print("Mini socket client done init")
-
 
     def __init__(self,config_file_name=''):
-        #1. parse arguments 
+        #Parse arguments 
 
         if(config_file_name == ''): 
-            host=""
-            port=12345
-            send_freq=500
-            socket_buffer_sz=4096
+            host             = ""
+            port             = 12345
+            send_freq        = 500
+            socket_buffer_sz = 4096
             self.max_user_message_queue_size = 100
         else: 
             # parse json config file
@@ -277,20 +260,16 @@ class MiniSocketClient:
                 socket_buffer_sz = socket_config['net_params']['SOCKET_BUFFER_SIZE']
                 self.max_user_message_queue_size = socket_config\
                             ['net_params']["MAX_SEND_MESSAGE_FRAME_QUEUE_SIZE"]
-        #2. assign arguments
+        #Assign arguments
         self.socket_recv_buffer_sz = socket_buffer_sz
+        self.user_message          = ''
+        self.user_message_queu     = queue.Queue()
         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
-        self.user_message = ''
-        self.user_message_queu = queue.Queue()
         
         self.sel = selectors.DefaultSelector()        
         self.start_connection(host, port)
 
-        #self.test_commu_thread = threading.Thread(target=self.test_commu_thread, args=(2,))
-        #self.test_commu_thread.daemon = True
-        #self.test_commu_thread.start()
-
-        self.socket_thread_obj = threading.Thread(target=self.socket_thread, args=(2,))
+        self.socket_thread_obj        = threading.Thread(target=self.socket_thread, args=(2,))
         self.socket_thread_obj.daemon = True
         self.socket_thread_obj.start()
         self.recv_queues = queue.Queue()
@@ -320,13 +299,12 @@ class MiniSocketClient:
         print("connectstat: "+str(connectstat))
         print("sock: "+str(sock))
         print("self.socket_recv_buffer_sz: "+str(self.socket_recv_buffer_sz))
-        #events = selectors.EVENT_READ
+        
         events = selectors.EVENT_READ| selectors.EVENT_WRITE
         libclient_obj = MessageClient(self.sel, sock, addr,self.socket_recv_buffer_sz)
         self.sel.register(sock, events, data=libclient_obj)
 
         return True
-
 
     def socket_thread(self,name): 
         counter = 0
@@ -398,7 +376,6 @@ class MiniSocketClient:
             print("mini socket: Close clients")
             self.sel.close()
             return
-
 
     def test_commu_thread(self,name):        
         counter = 0
