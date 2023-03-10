@@ -31,9 +31,9 @@ class MessageClient:
 
     def create_request(self,value):
             return dict(
-                type="text/json",
+                type    ="text/json",
                 encoding="utf-8",
-                content=dict(value=value),
+                content =dict(value=value),
             )
 
     def _set_selector_events_mask(self, mode):
@@ -162,8 +162,8 @@ class MessageClient:
             self.sock = None
 
     def queue_request(self,sentdata):
-        content = sentdata
-        content_type = self.request["type"]
+        content          = sentdata
+        content_type     = self.request["type"]
         content_encoding = self.request["encoding"]
        
         req = \
@@ -326,7 +326,6 @@ class MiniSocketClient:
                             #print("socket libclient_obj will send： "+self.user_message)
                             libclient_obj.client_send_json(self.user_message)                                     
 
-
                     self.user_message = '' # clear out    
                 else: 
                     #sleep longer to decrease cpu rate
@@ -367,8 +366,7 @@ class MiniSocketClient:
                     if(counter<10):
                         print("mini socket: Servor not started "+str(counter) )
                     counter = counter+1
-                    
-                    
+                                      
         except KeyboardInterrupt:
             print("Caught keyboard interrupt, exiting")
             return

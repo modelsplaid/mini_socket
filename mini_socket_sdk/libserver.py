@@ -27,9 +27,9 @@ class MessageServer:
 
     def create_request(self,value):
             return dict(
-                type="text/json",
-                encoding="utf-8",
-                content=dict(value=value),
+                type    ="text/json"      ,
+                encoding="utf-8"          ,
+                content =dict(value=value),
             )
 
     def _set_selector_events_mask(self, mode):
@@ -77,7 +77,6 @@ class MessageServer:
                 pass
             else:
                 self._send_buffer = self._send_buffer[sent:]            
-      
             
     def _json_encode(self, obj, encoding):
         return json.dumps(obj, ensure_ascii=False).encode(encoding)
@@ -135,7 +134,6 @@ class MessageServer:
                 if self.process_response() == False:
                     return    # does not receive all jsonheader yet, quit it to receive more data
 
-
     def queue_request(self,sentdata):
         content = sentdata
         content_type = self.request["type"]
@@ -150,7 +148,6 @@ class MessageServer:
  
         message            = self._create_message(**req)
         self._send_buffer += message
-
 
     def close(self):
         print(f"Closing connection to {self.addr}")
@@ -288,7 +285,7 @@ class MiniSocketServer:
         self.test_commu_thread.daemon = True
         self.test_commu_thread.start()
 
-        self.socket_thread_obj = threading.Thread(target=self.socket_thread, args=(2,))
+        self.socket_thread_obj        = threading.Thread(target=self.socket_thread, args=(2,))
         self.socket_thread_obj.daemon = True
         self.socket_thread_obj.start()
         self.recv_queues = queue.Queue()
@@ -315,6 +312,7 @@ class MiniSocketServer:
             self.user_message_queu.put(user_input)
             #print("user_message_queu exceeded maximum size,drop this data!")
             pass
+
     def pop_receiver_queue(self):
         if (self.recv_queues.empty()==False):
             return self.recv_queues.get()
@@ -384,7 +382,6 @@ class MiniSocketServer:
             self.sel.close()        
             pass
 
-
     def test_commu_thread(self,name):        
         counter = 0
         while(True):
@@ -394,14 +391,12 @@ class MiniSocketServer:
             self.user_message = "server counter value: "+str(counter)
             time.sleep(0.01)
 
-
     def accept_wrapper(self,sock):
         conn, addr = sock.accept()  # Should be ready to read
         print(f"Accepted connection from {addr}")
         conn.setblocking(False)
         libserver_obj = MessageServer(self.sel, conn, addr,self.socket_recv_buffer_sz)
         self.sel.register(conn, selectors.EVENT_READ| selectors.EVENT_WRITE, data=libserver_obj)
-
 
     def sleep_freq_hz(self,freq_hz=500):
         period_sec = 1.0/freq_hz
