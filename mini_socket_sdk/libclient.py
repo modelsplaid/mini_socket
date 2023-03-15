@@ -259,7 +259,7 @@ class MiniSocketClient:
                 send_freq        = socket_config['net_params']['SEND_FREQUENCY_HZ']
                 socket_buffer_sz = socket_config['net_params']['SOCKET_BUFFER_SIZE']
                 self.max_user_message_queue_size = socket_config\
-                            ['net_params']["MAX_SEND_MESSAGE_FRAME_QUEUE_SIZE"]
+                            ['net_params']["MAX_SEND_MSG_QSIZE"]
         #Assign arguments
         self.socket_recv_buffer_sz = socket_buffer_sz
         self.user_message          = ''
