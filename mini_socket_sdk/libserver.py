@@ -11,7 +11,7 @@ import socket
 import time
 
 class MessageServer:
-    def __init__(self, selector, sock, addr,socket_buffer_sz=40960):
+    def __init__(self, selector, sock, addr,sock_buf_sz=40960):
         self.selector         = selector
         self.sock             = sock
         self.addr             = addr
@@ -23,7 +23,7 @@ class MessageServer:
         self.request          = self.create_request('')
         self.recv_queue       = queue.Queue()
         self.hdrlen           = 2
-        self.socket_recv_buffer_sz = socket_buffer_sz
+        self.sock_recv_buf_sz = sock_buf_sz
 
     def create_request(self,value):
             return dict(
@@ -48,7 +48,7 @@ class MessageServer:
         try:
             # Should be ready to read
             #data = self.sock.recv(40)
-            data = self.sock.recv(self.socket_recv_buffer_sz)
+            data = self.sock.recv(self.sock_recv_buf_sz)
             #print("recv data: "+str(data))
         except BlockingIOError:
             # Resource temporarily unavailable (errno EWOULDBLOCK)
@@ -251,44 +251,43 @@ class MiniSocketServer:
     def __init__(self,config_file_name=''):
         
         if(config_file_name is ''):
-            host             = ""
-            port             = 12345
-            send_freq        = 500
-            socket_buffer_sz = 40960
-            self.max_user_message_queue_size = 100
+            host                 = ""
+            port                 = 12345
+            send_freq            = 500
+            sock_buf_sz          = 40960
+            self.max_usr_msg_qsz = 100
         else:
             # parse json config file
             print("Parsing json config file for socket")
             with open(config_file_name, "r") as fObj:
-                socket_config = json.load(fObj)               
-                print("socket_config content: ")
-                print(socket_config)
-                host             = socket_config['net_params']['IP']
-                port             = socket_config['net_params']['PORT']
-                send_freq        = socket_config['net_params']['SEND_FREQUENCY_HZ']
-                socket_buffer_sz = socket_config['net_params']['SOCKET_BUFFER_SIZE']
+                sock_cfg = json.load(fObj)               
+                print("socket configuration: ")
+                print(sock_cfg)
+                host             = sock_cfg['net_params']['IP']
+                port             = sock_cfg['net_params']['PORT']
+                send_freq        = sock_cfg['net_params']['COMMU_FREQ_HZ']
+                sock_buf_sz      = sock_cfg['net_params']['SOCKET_BUFFER_SIZE']
 
-                self.max_user_message_queue_size = socket_config\
+                self.max_usr_msg_qsz = sock_cfg\
                             ['net_params']["MAX_SEND_MSG_QSIZE"]
                             
-        self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
-        self.socket_recv_buffer_sz = socket_buffer_sz
+        self.SEVR_MAX_COMMU_FREQ_HZ= send_freq
+        self.sock_recv_buf_sz      = sock_buf_sz
         self.user_message          = ''
         self.user_message_queu     = queue.Queue()
+        self.recv_queues           = queue.Queue()
          
-        self.max_user_message_queue_size = 100
-
-        self.sel = selectors.DefaultSelector()        
+        self.sel                   = selectors.DefaultSelector()        
         self.create_listening_port(host,port)
 
-        self.test_commu_thread        = threading.Thread(target=self.test_commu_thread, args=(2,))
-        self.test_commu_thread.daemon = True
-        self.test_commu_thread.start()
+        #self.test_commu_thread        = threading.Thread(target=self.test_commu_thread, args=(2,))
+        #self.test_commu_thread.daemon = True
+        #self.test_commu_thread.start()
 
         self.socket_thread_obj        = threading.Thread(target=self.socket_thread, args=(2,))
         self.socket_thread_obj.daemon = True
         self.socket_thread_obj.start()
-        self.recv_queues = queue.Queue()
+
        
         print("Mini socket server done init")
 
@@ -305,7 +304,7 @@ class MiniSocketServer:
         return True
 
     def push_sender_queu(self,user_input):
-        if(self.user_message_queu.qsize() < self.max_user_message_queue_size):
+        if(self.user_message_queu.qsize() < self.max_usr_msg_qsz):
             self.user_message_queu.put(user_input)
         else:
             self.user_message_queu.get() # update queu to most recent data
@@ -395,7 +394,7 @@ class MiniSocketServer:
         conn, addr = sock.accept()  # Should be ready to read
         print(f"Accepted connection from {addr}")
         conn.setblocking(False)
-        libserver_obj = MessageServer(self.sel, conn, addr,self.socket_recv_buffer_sz)
+        libserver_obj = MessageServer(self.sel, conn, addr,self.sock_recv_buf_sz)
         self.sel.register(conn, selectors.EVENT_READ| selectors.EVENT_WRITE, data=libserver_obj)
 
     def sleep_freq_hz(self,freq_hz=500):

@@ -1689,7 +1689,7 @@ static const char __pyx_k_MiniSocketServer_pop_receiver_qu[] = "MiniSocketServer
 static const char __pyx_k_MiniSocketServer_push_sender_que[] = "MiniSocketServer.push_sender_queu";
 static const char __pyx_k_MiniSocketServer_test_commu_thre[] = "MiniSocketServer.test_commu_thread";
 static const char __pyx_k_Resource_temporarily_unavailable[] = "Resource temporarily unavailable (errno EWOULDBLOCK)";
-static const char __pyx_k_SERVER_MAX_SEND_RECV_FREQUENCY_H[] = "SERVER_MAX_SEND_RECV_FREQUENCY_HZ";
+static const char __pyx_k_SERVER_MAX_SEND_RECV_FREQUENCY_H[] = "SEVR_MAX_COMMU_FREQ_HZ";
 static const char __pyx_k_not_received_full_data_pack_if_n[] = "not received full data pack. if not len(self._recv_raw_buffer) >= content_len";
 static PyObject *__pyx_kp_b_;
 static PyObject *__pyx_kp_s_;
@@ -6867,7 +6867,7 @@ static PyObject *__pyx_pf_9libserver_13MessageServer_34get_recv_queu(CYTHON_UNUS
  * 
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):             # <<<<<<<<<<<<<<
  * 
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  */
 
 /* Python wrapper */
@@ -6994,7 +6994,7 @@ static PyObject *__pyx_pf_9libserver_16MiniSocketServer___init__(CYTHON_UNUSED P
   /* "libserver.pyx":260
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):
  * 
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq             # <<<<<<<<<<<<<<
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq             # <<<<<<<<<<<<<<
  *         self.socket_recv_buffer_sz = socket_buffer_sz
  *         self.user_message = ''
  */
@@ -7002,7 +7002,7 @@ static PyObject *__pyx_pf_9libserver_16MiniSocketServer___init__(CYTHON_UNUSED P
 
   /* "libserver.pyx":261
  * 
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  *         self.socket_recv_buffer_sz = socket_buffer_sz             # <<<<<<<<<<<<<<
  *         self.user_message = ''
  *         self.user_message_queu = queue.Queue()
@@ -7010,7 +7010,7 @@ static PyObject *__pyx_pf_9libserver_16MiniSocketServer___init__(CYTHON_UNUSED P
   if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_socket_recv_buffer_sz, __pyx_v_socket_buffer_sz) < 0) __PYX_ERR(0, 261, __pyx_L1_error)
 
   /* "libserver.pyx":262
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  *         self.socket_recv_buffer_sz = socket_buffer_sz
  *         self.user_message = ''             # <<<<<<<<<<<<<<
  *         self.user_message_queu = queue.Queue()
@@ -7312,7 +7312,7 @@ static PyObject *__pyx_pf_9libserver_16MiniSocketServer___init__(CYTHON_UNUSED P
  * 
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):             # <<<<<<<<<<<<<<
  * 
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  */
 
   /* function exit code */
@@ -10423,7 +10423,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * 
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):             # <<<<<<<<<<<<<<
  * 
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  */
   __pyx_tuple__45 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_host, __pyx_n_s_port, __pyx_n_s_send_freq, __pyx_n_s_socket_buffer_sz); if (unlikely(!__pyx_tuple__45)) __PYX_ERR(0, 258, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__45);
@@ -11191,7 +11191,7 @@ if (!__Pyx_RefNanny) {
  * 
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):             # <<<<<<<<<<<<<<
  * 
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  */
   __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9libserver_16MiniSocketServer_1__init__, 0, __pyx_n_s_MiniSocketServer___init, NULL, __pyx_n_s_libserver, __pyx_d, ((PyObject *)__pyx_codeobj__46)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 258, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);

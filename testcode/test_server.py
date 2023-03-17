@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
 import sys
+sys.path.append("../")
 import socket
 import selectors
 import traceback
 import time
 import threading
 import logging
-from mini_socket_sdk.libserver import MiniSocketServer
+from   mini_socket_sdk.libserver import MiniSocketServer
 #sel = selectors.DefaultSelector()
 
 #logging.basicConfig(filename='app.log',level=logging.DEBUG,filemode='w', 
@@ -15,8 +16,8 @@ logging.basicConfig(level=logging.INFO,filemode='w',
 format='%(filename)s,%(funcName)s,%(lineno)d,%(name)s ,%(process)d, %(levelname)s,%(libserver_obj)s')
 logging.debug('This will get logged')
 
-if __name__ == '__main__':
-    m_sock_server=MiniSocketServer('net_commu_config.json')
+def test_msg_integrity():
+    m_sock_server = MiniSocketServer('net_commu_config.json')
     i = 0
     while True:
         i=i+1
@@ -33,3 +34,10 @@ if __name__ == '__main__':
         time.sleep(0.01)
 
     sys.exit()
+
+def test_msg_punctuality():
+    # todo ...
+    pass
+
+if __name__ == '__main__':
+    test_msg_integrity()

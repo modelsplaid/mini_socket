@@ -1681,7 +1681,7 @@ static const char __pyx_k_MiniSocketClient_push_sender_que[] = "MiniSocketClient
 static const char __pyx_k_MiniSocketClient_start_connectio[] = "MiniSocketClient.start_connection";
 static const char __pyx_k_MiniSocketClient_test_commu_thre[] = "MiniSocketClient.test_commu_thread";
 static const char __pyx_k_Resource_temporarily_unavailable[] = "Resource temporarily unavailable (errno EWOULDBLOCK";
-static const char __pyx_k_SERVER_MAX_SEND_RECV_FREQUENCY_H[] = "SERVER_MAX_SEND_RECV_FREQUENCY_HZ";
+static const char __pyx_k_SERVER_MAX_SEND_RECV_FREQUENCY_H[] = "SEVR_MAX_COMMU_FREQ_HZ";
 static const char __pyx_k_not_received_full_data_pack_if_n[] = "not received full data pack. if not len(self._recv_raw_buffer) >= content_len";
 static const char __pyx_k_Resource_temporarily_unavailable_2[] = "Resource temporarily unavailable (errno EWOULDBLOCK)";
 static PyObject *__pyx_kp_b_;
@@ -6612,7 +6612,7 @@ static PyObject *__pyx_pf_9libclient_13MessageClient_32get_recv_queu(CYTHON_UNUS
  * class MiniSocketClient:
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):             # <<<<<<<<<<<<<<
  *         self.socket_recv_buffer_sz = socket_buffer_sz
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  */
 
 /* Python wrapper */
@@ -6740,7 +6740,7 @@ static PyObject *__pyx_pf_9libclient_16MiniSocketClient___init__(CYTHON_UNUSED P
  * class MiniSocketClient:
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):
  *         self.socket_recv_buffer_sz = socket_buffer_sz             # <<<<<<<<<<<<<<
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  *         self.user_message = ''
  */
   if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_socket_recv_buffer_sz, __pyx_v_socket_buffer_sz) < 0) __PYX_ERR(0, 239, __pyx_L1_error)
@@ -6748,7 +6748,7 @@ static PyObject *__pyx_pf_9libclient_16MiniSocketClient___init__(CYTHON_UNUSED P
   /* "libclient.pyx":240
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):
  *         self.socket_recv_buffer_sz = socket_buffer_sz
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq             # <<<<<<<<<<<<<<
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq             # <<<<<<<<<<<<<<
  *         self.user_message = ''
  *         self.user_message_queu = queue.Queue()
  */
@@ -6756,7 +6756,7 @@ static PyObject *__pyx_pf_9libclient_16MiniSocketClient___init__(CYTHON_UNUSED P
 
   /* "libclient.pyx":241
  *         self.socket_recv_buffer_sz = socket_buffer_sz
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  *         self.user_message = ''             # <<<<<<<<<<<<<<
  *         self.user_message_queu = queue.Queue()
  *         self.sel = selectors.DefaultSelector()
@@ -6764,7 +6764,7 @@ static PyObject *__pyx_pf_9libclient_16MiniSocketClient___init__(CYTHON_UNUSED P
   if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_user_message, __pyx_kp_s_) < 0) __PYX_ERR(0, 241, __pyx_L1_error)
 
   /* "libclient.pyx":242
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  *         self.user_message = ''
  *         self.user_message_queu = queue.Queue()             # <<<<<<<<<<<<<<
  *         self.sel = selectors.DefaultSelector()
@@ -6990,7 +6990,7 @@ static PyObject *__pyx_pf_9libclient_16MiniSocketClient___init__(CYTHON_UNUSED P
  * class MiniSocketClient:
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):             # <<<<<<<<<<<<<<
  *         self.socket_recv_buffer_sz = socket_buffer_sz
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  */
 
   /* function exit code */
@@ -9890,7 +9890,7 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
  * class MiniSocketClient:
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):             # <<<<<<<<<<<<<<
  *         self.socket_recv_buffer_sz = socket_buffer_sz
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  */
   __pyx_tuple__43 = PyTuple_Pack(5, __pyx_n_s_self, __pyx_n_s_host, __pyx_n_s_port, __pyx_n_s_send_freq, __pyx_n_s_socket_buffer_sz); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__43);
@@ -10634,7 +10634,7 @@ if (!__Pyx_RefNanny) {
  * class MiniSocketClient:
  *     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):             # <<<<<<<<<<<<<<
  *         self.socket_recv_buffer_sz = socket_buffer_sz
- *         self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+ *         self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
  */
   __pyx_t_2 = __Pyx_CyFunction_New(&__pyx_mdef_9libclient_16MiniSocketClient_1__init__, 0, __pyx_n_s_MiniSocketClient___init, NULL, __pyx_n_s_libclient, __pyx_d, ((PyObject *)__pyx_codeobj__44)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 238, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);

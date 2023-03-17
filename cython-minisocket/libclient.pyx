@@ -237,7 +237,7 @@ class MessageClient:
 class MiniSocketClient:
     def __init__(self,host="",port=12345,send_freq=500,socket_buffer_sz=4096):
         self.socket_recv_buffer_sz = socket_buffer_sz
-        self.SERVER_MAX_SEND_RECV_FREQUENCY_HZ = send_freq
+        self.SEVR_MAX_COMMU_FREQ_HZ = send_freq
         self.user_message = ''
         self.user_message_queu = queue.Queue()
         self.sel = selectors.DefaultSelector()        
