@@ -269,7 +269,7 @@ class MiniSocketServer:
                 sock_buf_sz      = sock_cfg['net_params']['SOCKET_BUFFER_SIZE']
 
                 self.max_usr_msg_qsz = sock_cfg\
-                            ['net_params']["MAX_SEND_MSG_QSIZE"]
+                            ['net_params']["MAX_USR_MSG_QSIZE"]
                             
         self.SEVR_MAX_COMMU_FREQ_HZ= send_freq
         self.sock_recv_buf_sz      = sock_buf_sz

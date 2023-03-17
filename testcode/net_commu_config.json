@@ -4,6 +4,6 @@
         "PORT"              :12346,
         "COMMU_FREQ_HZ"     :500  ,
         "SOCKET_BUFFER_SIZE":40960,
-        "MAX_SEND_MSG_QSIZE":100
+        "MAX_USR_MSG_QSIZE":100
     }
 }
