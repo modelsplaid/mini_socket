@@ -256,9 +256,10 @@ class MiniSocketClient:
                 print(socket_config)
                 host                 = socket_config['net_params']['IP'                ]
                 port                 = socket_config['net_params']['PORT'              ]
-                commu_freq           = socket_config['net_params']['COMMU_FREQ_HZ' ]
+                commu_freq           = socket_config['net_params']['COMMU_FREQ_HZ'     ]
                 socket_buffer_sz     = socket_config['net_params']['SOCKET_BUFFER_SIZE']
-                self.max_usr_msg_qsz = socket_config['net_params']["MAX_USR_MSG_QSIZE"]
+                self.max_usr_msg_qsz = socket_config['net_params']["MAX_USR_MSG_QSIZE" ]
+
         #Assign arguments
         self.sock_recv_buf_sz       = socket_buffer_sz
         self.usr_msg                = ''
@@ -274,6 +275,7 @@ class MiniSocketClient:
         self.sock_thd_obj.start()
 
         print("Mini socket client done init")
+
     def push_sender_queu(self,user_input):
         if(self.usr_msg_q.qsize() < self.max_usr_msg_qsz):
             self.usr_msg_q.put(user_input)
@@ -299,7 +301,7 @@ class MiniSocketClient:
         print("sock: "+str(sock))
         print("self.sock_recv_buf_sz: "+str(self.sock_recv_buf_sz))
         
-        events = selectors.EVENT_READ| selectors.EVENT_WRITE
+        events        = selectors.EVENT_READ| selectors.EVENT_WRITE
         libclient_obj = MessageClient(self.sel, sock, addr,self.sock_recv_buf_sz)
         self.sel.register(sock, events, data=libclient_obj)
 
@@ -379,7 +381,7 @@ class MiniSocketClient:
         while(True):
             #str_usr = input("Type what you want to send: ")
             #print("This content will send to client: "+str_usr)
-            counter = counter+1
+            counter      = counter+1
             self.usr_msg = "client counter value: "+str(counter)
             time.sleep(0.01)
 

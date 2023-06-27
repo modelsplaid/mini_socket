@@ -27,9 +27,9 @@ class MessageServer:
 
     def create_request(self,value):
             return dict(
-                type    ="text/json"      ,
-                encoding="utf-8"          ,
-                content =dict(value=value),
+                type     = "text/json"      ,
+                encoding = "utf-8"          ,
+                content  = dict(value=value),
             )
 
     def _set_selector_events_mask(self, mode):
@@ -214,9 +214,9 @@ class MessageServer:
 
                 self.recv_queue.put(self.response) # pop out the queu
                 # to prepare decode next frame in recv buffer
-                self.response = None
+                self.response        = None
                 self._jsonheader_len = None
-                self.jsonheader = None
+                self.jsonheader      = None
 
             return True
 
@@ -224,10 +224,11 @@ class MessageServer:
         content_len = self.jsonheader["content-length"]
         if not len(self._recv_raw_buffer) >= content_len:
             return
+        
         data = self._recv_raw_buffer[:content_len]
         self._recv_raw_buffer = self._recv_raw_buffer[content_len:]
         if self.jsonheader["content-type"] == "text/json":
-            encoding = self.jsonheader["content-encoding"]
+            encoding     = self.jsonheader["content-encoding"]
             self.request = self._json_decode(data, encoding)
             print(f"Received request {self.request!r} from {self.addr}")
         else:
@@ -276,7 +277,6 @@ class MiniSocketServer:
         self.user_message          = ''
         self.user_message_queu     = queue.Queue()
         self.recv_queues           = queue.Queue()
-         
         self.sel                   = selectors.DefaultSelector()        
         self.create_listening_port(host,port)
 
