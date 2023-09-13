@@ -65,7 +65,7 @@ class MessageClient:
             if data:
                 self._recv_raw_buffer += data
             else:
-                print("---peer closed")
+                #print("---peer closed")
                 time.sleep(3)
                 return False
         return True
