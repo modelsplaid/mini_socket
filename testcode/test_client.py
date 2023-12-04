@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO,
 format='%(filename)s,%(funcName)s,%(lineno)d,%(name)s ,%(process)d, %(levelname)s,%(libclient_obj)s')
 
 def test_msg_integrity():
-    m_sock_client = MiniSocketClient('net_commu_config.json')
+    m_sock_client = MiniSocketClient('net_bot_config.json')
 
     for i in range(2000):
         m_sock_client.push_sender_queu("client sent msg: " +str(i))
