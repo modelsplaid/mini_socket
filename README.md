@@ -1,4 +1,10 @@
-## rpi wiring: 
+## How to install 
+
+```
+chmod +x install.sh
+./instal.sh
+```
+
 ## Description: 
 
     This project is a socket api to communicate between server and client .
