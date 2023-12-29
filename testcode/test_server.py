@@ -17,7 +17,7 @@ format='%(filename)s,%(funcName)s,%(lineno)d,%(name)s ,%(process)d, %(levelname)
 logging.debug('This will get logged')
 
 def test_msg_integrity():
-    m_sock_server = MiniSocketServer('net_commu_config.json')
+    m_sock_server = MiniSocketServer('net_bot_config.json')
     i = 0
     while True:
         i=i+1
