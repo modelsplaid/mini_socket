@@ -1,14 +1,17 @@
-import sys
-import selectors
-import json
-import io
-import struct
-import logging
-import queue
-import threading
-import traceback
-import socket
-import time
+import  io
+import  sys
+import  json
+import  time
+import  queue
+import  struct
+import  socket
+import  logging
+import  warnings
+import  selectors
+import  threading
+import  traceback
+
+from    utils.print_flush      import print_flush
 
 class MessageServer:
     def __init__(self, selector, sock, addr,sock_buf_sz=40960):
@@ -49,10 +52,10 @@ class MessageServer:
             # Should be ready to read
             #data = self.sock.recv(40)
             data = self.sock.recv(self.sock_recv_buf_sz)
-            #print("recv data: "+str(data))
+            #print_flush("recv data: "+str(data))
         except BlockingIOError:
             # Resource temporarily unavailable (errno EWOULDBLOCK)
-            print("# Resource temporarily unavailable (errno EWOULDBLOCK)")
+            print_flush("# Resource temporarily unavailable (errno EWOULDBLOCK)")
             #pass
             return False
         else:
@@ -61,19 +64,21 @@ class MessageServer:
                 return True
             else:
                 #raise RuntimeError("Peer closed.")
-                print("Client closed.")
+                #print_flush("Client closed.")
+                warnings.warn("Client has been closed.")
+                
         return False
 
     def write(self):
         if len(self._send_buffer)>0:
 
-            #print(f"Sending {self._send_buffer!r} to {self.addr}")
+            #print_flush(f"Sending {self._send_buffer!r} to {self.addr}")
             try:
                 # Should be ready to write
                 sent = self.sock.send(self._send_buffer)
             except BlockingIOError:
                 # Resource temporarily unavailable (errno EWOULDBLOCK)
-                print("Resource temporarily unavailable (errno EWOULDBLOCK)")
+                print_flush("Resource temporarily unavailable (errno EWOULDBLOCK)")
                 pass
             else:
                 self._send_buffer = self._send_buffer[sent:]            
@@ -106,7 +111,7 @@ class MessageServer:
         return message
 
     def process_events(self, mask):
-        #print("In process_events, mask: "+str(mask))
+        #print_flush("In process_events, mask: "+str(mask))
         if mask & selectors.EVENT_READ:
             self.read()
         if mask & selectors.EVENT_WRITE:
@@ -150,11 +155,11 @@ class MessageServer:
         self._send_buffer += message
 
     def close(self):
-        print(f"Closing connection to {self.addr}")
+        print_flush(f"Closing connection to {self.addr}")
         try:
             self.selector.unregister(self.sock)
         except Exception as e:
-            print(
+            print_flush(
                 f"Error: selector.unregister() exception for "
                 f"{self.addr}: {e!r}"
             )
@@ -162,7 +167,7 @@ class MessageServer:
         try:
             self.sock.close()
         except OSError as e:
-            print(f"Error: socket.close() exception for {self.addr}: {e!r}")
+            print_flush(f"Error: socket.close() exception for {self.addr}: {e!r}")
         finally:
             # Delete reference to socket object for garbage collection
             self.sock = None
@@ -187,7 +192,7 @@ class MessageServer:
             
             return True  # means the raw buffer contains all json header content, and processed it 
         else: 
-            print("!!!!!!THIIS WARNING MEANS: means the raw buffer not contains all json header content, should skip it and wait next recev!!!!!")
+            print_flush("!!!!!!THIIS WARNING MEANS: means the raw buffer not contains all json header content, should skip it and wait next recev!!!!!")
             return False# means the raw buffer not contains all json header content, should skip it and wait next recev
 
     def process_response(self):
@@ -198,7 +203,7 @@ class MessageServer:
         # if not received full data pack 
         if  content_len > len(self._recv_raw_buffer):
             #logging.error("not received full data pack. if not len(self._recv_raw_buffer) >= content_len")
-            #print("!!!!!!not received full data pack. return process_response!!!!!!")
+            #print_flush("!!!!!!not received full data pack. return process_response!!!!!!")
             return False
         else:
             # if  received full data pack, start to process it 
@@ -210,7 +215,7 @@ class MessageServer:
                 encoding = self.jsonheader["content-encoding"]
                 self.response = self._json_decode(data, encoding) 
                 logging.debug("self.response:"+str(self.response))
-                #print(f"Received response {self.response!r} from {self.addr}")
+                #print_flush(f"Received response {self.response!r} from {self.addr}")
 
                 self.recv_queue.put(self.response) # pop out the queu
                 # to prepare decode next frame in recv buffer
@@ -230,11 +235,11 @@ class MessageServer:
         if self.jsonheader["content-type"] == "text/json":
             encoding     = self.jsonheader["content-encoding"]
             self.request = self._json_decode(data, encoding)
-            print(f"Received request {self.request!r} from {self.addr}")
+            print_flush(f"Received request {self.request!r} from {self.addr}")
         else:
             # Binary or unknown content-type
             self.request = data
-            print(
+            print_flush(
                 f"Received {self.jsonheader['content-type']} "
                 f"request from {self.addr}"
             )
@@ -259,11 +264,11 @@ class MiniSocketServer:
             self.max_usr_msg_qsz = 100
         else:
             # parse json config file
-            print("Parsing json config file for socket")
+            print_flush("Parsing json config file for socket")
             with open(config_file_name, "r") as fObj:
                 sock_cfg = json.load(fObj)               
-                print("socket configuration: ")
-                print(sock_cfg)
+                print_flush("socket configuration: ")
+                print_flush(sock_cfg)
                 host             = sock_cfg['net_params']['IP']
                 port             = sock_cfg['net_params']['PORT']
                 send_freq        = sock_cfg['net_params']['COMMU_FREQ_HZ']
@@ -289,7 +294,7 @@ class MiniSocketServer:
         self.socket_thread_obj.start()
 
        
-        print("Mini socket server done init")
+        print_flush("Mini socket server done init")
 
     def create_listening_port(self,host,port):
         lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -297,7 +302,7 @@ class MiniSocketServer:
         lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         lsock.bind((host, port))
         lsock.listen()
-        print(f"Listening on {(host, port)}")
+        print_flush(f"Listening on {(host, port)}")
         lsock.setblocking(False)
         #sel.register(lsock, selectors.EVENT_WRITE|selectors.EVENT_READ, data=None)
         self.sel.register(lsock, selectors.EVENT_READ, data=None)
@@ -309,7 +314,7 @@ class MiniSocketServer:
         else:
             self.user_message_queu.get() # update queu to most recent data
             self.user_message_queu.put(user_input)
-            #print("user_message_queu exceeded maximum size,drop this data!")
+            #print_flush("user_message_queu exceeded maximum size,drop this data!")
             pass
 
     def pop_receiver_queue(self):
@@ -322,25 +327,25 @@ class MiniSocketServer:
         try:
             while True:
                 self.sleep_freq_hz() 
-                #print("events = self.sel.select(None)")
+                #print_flush("events = self.sel.select(None)")
                 #events = self.sel.select(0.01)
                 events = self.sel.select(None)
-                #print("if(self.user_message_queu.empty()")
+                #print_flush("if(self.user_message_queu.empty()")
 
                 # load data and events for each connected client 
                 if(self.user_message_queu.empty() is  False):
                     self.user_message = self.user_message_queu.get()
-                    #print("self.user_message: "+str(self.user_message))
-                    #print("events: "+str(events))
+                    #print_flush("self.user_message: "+str(self.user_message))
+                    #print_flush("events: "+str(events))
                     for key, mask in events: # loop over each client connect objs
                         if key.data is not None:  # if connected to the client
                             libserver_obj = key.data
-                            #print("socket libserver_obj will send： "+self.user_message)
+                            #print_flush("socket libserver_obj will send： "+self.user_message)
                             libserver_obj.server_send_json(self.user_message)                                     
 
                         else: 
                             pass
-                            #print("key.data is not None")
+                            #print_flush("key.data is not None")
 
                     self.user_message = '' # clear out    
                 else: 
@@ -363,20 +368,20 @@ class MiniSocketServer:
                                 if(onedata is not False):
                                     self.recv_queues.put(onedata)
 
-                                    #print("---- received from client data: "+str(onedata))
+                                    #print_flush("---- received from client data: "+str(onedata))
                                 else: 
                                     break
 
                             # clear libserver_obj out             
                         except Exception:
-                            print(
+                            print_flush(
                                 f"Main: Error: Exception for {libserver_obj.addr}:\n"
                                 f"{traceback.format_exc()}"
                             )
                             libserver_obj.close()
 
         except KeyboardInterrupt:
-            print("---Caught keyboard interrupt, exiting")
+            print_flush("---Caught keyboard interrupt, exiting")
         finally:
             self.sel.close()        
             pass
@@ -385,14 +390,14 @@ class MiniSocketServer:
         counter = 0
         while(True):
             #str_usr = input("Type what you want to send: ")
-            #print("This content will send to server: "+str_usr)
+            #print_flush("This content will send to server: "+str_usr)
             counter = counter+1
             self.user_message = "server counter value: "+str(counter)
             time.sleep(0.01)
 
     def accept_wrapper(self,sock):
         conn, addr = sock.accept()  # Should be ready to read
-        print(f"Accepted connection from {addr}")
+        print_flush(f"Accepted connection from {addr}")
         conn.setblocking(False)
         libserver_obj = MessageServer(self.sel, conn, addr,self.sock_recv_buf_sz)
         self.sel.register(conn, selectors.EVENT_READ| selectors.EVENT_WRITE, data=libserver_obj)
