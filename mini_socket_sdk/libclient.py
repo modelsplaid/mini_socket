@@ -11,7 +11,7 @@ import  selectors
 import  threading
 import  traceback
 
-from    utils.print_flush      import print_flush
+from    utils.print_flush      import print_flush as print
 
 class MessageClient:
     def __init__(self, selector, sock, addr,socket_buffer_sz=40960):
@@ -56,20 +56,20 @@ class MessageClient:
         try:
             # Should be ready to read
             data = self.sock.recv(self.sock_recv_buf_sz)
-            #print_flush("received data in _read(): "+str(data) )
+            #print("received data in _read(): "+str(data) )
         except BlockingIOError:
             # Resource temporarily unavailable (errno EWOULDBLOCK)
-            print_flush("Resource temporarily unavailable (errno EWOULDBLOCK")
+            print("Resource temporarily unavailable (errno EWOULDBLOCK")
             return False
     
         except ConnectionRefusedError:
-            print_flush("Connection refused")
+            print("Connection refused")
             return False
         else:
             if data:
                 self._recv_raw_buffer += data
             else:
-                #print_flush("---peer closed")
+                #print("---peer closed")
                 time.sleep(3)
                 return False
         return True
@@ -77,12 +77,12 @@ class MessageClient:
     def write(self):
         if len(self._send_buffer)>0:
             
-            #print_flush(f"Sending {self._send_buffer!r} to {self.addr}")
+            #print(f"Sending {self._send_buffer!r} to {self.addr}")
             try:
                 # Should be ready to write
                 sent = self.sock.send(self._send_buffer)
             except BlockingIOError:
-                print_flush("Resource temporarily unavailable (errno EWOULDBLOCK)")
+                print("Resource temporarily unavailable (errno EWOULDBLOCK)")
                 pass
 
             else:
@@ -92,7 +92,7 @@ class MessageClient:
         return json.dumps(obj, ensure_ascii=False).encode(encoding)
 
     def _json_decode(self, json_bytes, encoding):
-        #print_flush("json_bytes: "+str(json_bytes))
+        #print("json_bytes: "+str(json_bytes))
         tiow = io.TextIOWrapper(
             io.BytesIO(json_bytes), encoding=encoding, newline=""
         )
@@ -148,11 +148,11 @@ class MessageClient:
                     return    # does not receive all jsonheader yet, quit it to receive more data
 
     def close(self):
-        print_flush(f"Closing connection to {self.addr}")
+        print(f"Closing connection to {self.addr}")
         try:
             self.selector.unregister(self.sock)
         except Exception as e:
-            print_flush(
+            print(
                 f"Error: selector.unregister() exception for "
                 f"{self.addr}: {e!r}"
             )
@@ -160,7 +160,7 @@ class MessageClient:
         try:
             self.sock.close()
         except OSError as e:
-            print_flush(f"Error: socket.close() exception for {self.addr}: {e!r}")
+            print(f"Error: socket.close() exception for {self.addr}: {e!r}")
         finally:
             # Delete reference to socket object for garbage collection
             self.sock = None
@@ -205,7 +205,7 @@ class MessageClient:
                     raise ValueError(f"Missing required header '{reqhdr}'.")
             return True  # means the raw buffer contains all json header content, and processed it 
         else: 
-            print_flush("!!!!!!THIIS WARNING MEANS: RECEIVE BUFFER SIZE  IS NOT ENOUGH, CONSIDER TO INCREASE BUFFER SIZE, OR YOU MAY LOSE DATA !!!!!")
+            print("!!!!!!THIIS WARNING MEANS: RECEIVE BUFFER SIZE  IS NOT ENOUGH, CONSIDER TO INCREASE BUFFER SIZE, OR YOU MAY LOSE DATA !!!!!")
             return False
 
     def process_response(self):
@@ -213,7 +213,7 @@ class MessageClient:
 
         # if not received full data pack 
         if  content_len > len(self._recv_raw_buffer):
-            #print_flush("!!!!!!not received full data pack. return process_response")
+            #print("!!!!!!not received full data pack. return process_response")
             return False
 
         else:
@@ -225,7 +225,7 @@ class MessageClient:
                 encoding      = self.jsonheader["content-encoding"]
                 self.response = self._json_decode(data, encoding)
                 logging.debug("self.response:"+str(self.response))
-                #print_flush(f"Received response {self.response!r} from {self.addr}")
+                #print(f"Received response {self.response!r} from {self.addr}")
 
                 self.recv_queue.put(self.response) # pop out the queu
                 # to prepare decode next frame in buffer
@@ -253,11 +253,11 @@ class MiniSocketClient:
             self.max_usr_msg_qsz = 100
         else: 
             # parse json config file
-            print_flush("Parsing json config file for socket")
+            print("Parsing json config file for socket")
             with open(config_file_name, "r") as fObj:
                 socket_config = json.load(fObj)               
-                print_flush("socket_config content: ")
-                print_flush(socket_config)
+                print("socket_config content: ")
+                print(socket_config)
                 host                 = socket_config['net_params']['IP'                ]
                 port                 = socket_config['net_params']['PORT'              ]
                 commu_freq           = socket_config['net_params']['COMMU_FREQ_HZ'     ]
@@ -278,7 +278,7 @@ class MiniSocketClient:
         self.sock_thd_obj.daemon = True
         self.sock_thd_obj.start()
 
-        print_flush("Mini socket client done init")
+        print("Mini socket client done init")
 
     def push_sender_queu(self,user_input):
         if(self.usr_msg_q.qsize() < self.max_usr_msg_qsz):
@@ -286,7 +286,7 @@ class MiniSocketClient:
         else:
             self.usr_msg_q.get() # update queu to most recent data
             self.usr_msg_q.put(user_input)
-            #print_flush("usr_msg_q exceeded maximum size,drop this data!")
+            #print("usr_msg_q exceeded maximum size,drop this data!")
             pass
 
     def pop_receiver_queue(self):
@@ -297,13 +297,13 @@ class MiniSocketClient:
 
     def start_connection(self,host, port):
         addr = (host, port)
-        print_flush(f"Starting connection to {addr}")
+        print(f"Starting connection to {addr}")
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setblocking(False)
         connectstat=sock.connect_ex(addr)
-        print_flush("connectstat: "+str(connectstat))
-        print_flush("sock: "+str(sock))
-        print_flush("self.sock_recv_buf_sz: "+str(self.sock_recv_buf_sz))
+        print("connectstat: "+str(connectstat))
+        print("sock: "+str(sock))
+        print("self.sock_recv_buf_sz: "+str(self.sock_recv_buf_sz))
         
         events        = selectors.EVENT_READ| selectors.EVENT_WRITE
         libclient_obj = MessageClient(self.sel, sock, addr,self.sock_recv_buf_sz)
@@ -321,14 +321,14 @@ class MiniSocketClient:
 
                 # load data and events for each connected client 
                 #if(self.usr_msg is not ''):  # if new data is coming from servos
-                #print_flush("self.usr_msg_q.empty(): "+str(self.usr_msg_q.empty()) )
+                #print("self.usr_msg_q.empty(): "+str(self.usr_msg_q.empty()) )
                 if(self.usr_msg_q.empty() is  False):
                     self.usr_msg = self.usr_msg_q.get()
-                    #print_flush("usr_msg: "+str(self.usr_msg))
+                    #print("usr_msg: "+str(self.usr_msg))
                     for key, mask in events: # loop over each client connect objs
                         if key.data is not None:  # if connected to the client
                             libclient_obj = key.data
-                            #print_flush("socket libclient_obj will send： "+self.usr_msg)
+                            #print("socket libclient_obj will send： "+self.usr_msg)
                             libclient_obj.client_send_json(self.usr_msg)                                     
 
                     self.usr_msg = '' # clear out    
@@ -352,13 +352,13 @@ class MiniSocketClient:
                                 # when queue data is too large, pop out 
                                 if(self.recv_queues.qsize()>self.max_usr_msg_qsz):
                                     self.recv_queues.get()
-                                #print_flush("++++ received from server data: "+str(onedata))  
+                                #print("++++ received from server data: "+str(onedata))  
                             else:
                                 break
 
                     except Exception:
-                        print_flush(Exception)
-                        print_flush(
+                        print(Exception)
+                        print(
                             f"Main: Error: Exception for {libclient_obj.addr}:\n"
                             f"{traceback.format_exc()}"
                         )
@@ -369,14 +369,14 @@ class MiniSocketClient:
                     
                     self.sleep_freq_hz(1)
                     if(counter<5):
-                        print_flush("mini socket: Servor not started "+str(counter) )
+                        print("mini socket: Servor not started "+str(counter) )
                     counter = counter+1
                                       
         except KeyboardInterrupt:
-            print_flush("Caught keyboard interrupt, exiting")
+            print("Caught keyboard interrupt, exiting")
             return
         finally:
-            print_flush("mini socket: Close clients")
+            print("mini socket: Close clients")
             self.sel.close()
             return
 
@@ -384,7 +384,7 @@ class MiniSocketClient:
         counter = 0
         while(True):
             #str_usr = input("Type what you want to send: ")
-            #print_flush("This content will send to client: "+str_usr)
+            #print("This content will send to client: "+str_usr)
             counter      = counter+1
             self.usr_msg = "client counter value: "+str(counter)
             time.sleep(0.01)
